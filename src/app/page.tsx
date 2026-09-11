@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
-import { ArrowDown, ArrowUpRight, CircuitBoard, LockKeyhole, ShieldCheck, Sparkles, WalletCards } from "lucide-react";
+import { ArrowDown, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
 import { useRef, useState } from "react";
 
 const PAYFENCE_FEATURES = [
@@ -142,7 +142,7 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      <section className="after-scene"><div><span className="eyebrow-line"><span /> THE FENCE</span><h2>Trust is not a feeling.<br /><em>It is a system.</em></h2></div><div className="after-grid"><div><CircuitBoard /><b>Bounded credentials</b><p>Every mandate mints a scoped, single-use payment rail.</p></div><div><WalletCards /><b>Deterministic gates</b><p>Every retry, quote, and ceiling is verified before money moves.</p></div><div><ArrowUpRight /><b>Permanent proof</b><p>Every decision becomes a hash-chained, verifiable record.</p></div></div></section>
+
     </main>
   );
 }
