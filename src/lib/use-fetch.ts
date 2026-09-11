@@ -29,7 +29,14 @@ export function useFetch<T>(url: string | null) {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const res = await fetch(url, { signal: controller.signal });
+      const contentType = res.headers.get("content-type") ?? "";
+      if (!contentType.includes("application/json")) {
+        throw new Error(`Request failed with status ${res.status}`);
+      }
       const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error?.message ?? `Request failed with status ${res.status}`);
+      }
       if (!controller.signal.aborted) {
         // Handle the standardized { success, data } envelope
         if (json.success === true && json.data !== undefined) {

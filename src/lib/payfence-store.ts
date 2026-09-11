@@ -157,8 +157,22 @@ function makeSeedStore(): Store {
 }
 
 export function getStore() {
-  if (!globalStore.payFenceStore) globalStore.payFenceStore = makeSeedStore();
-  return globalStore.payFenceStore;
+  const store = globalStore.payFenceStore;
+  if (
+    !store ||
+    !Array.isArray(store.mandates) ||
+    !Array.isArray(store.transactions) ||
+    !Array.isArray(store.ledger) ||
+    !Array.isArray(store.escalations) ||
+    !Array.isArray(store.refundRequests) ||
+    !Array.isArray(store.auditLog) ||
+    !Array.isArray(store.agents)
+  ) {
+    const seedStore = makeSeedStore();
+    globalStore.payFenceStore = seedStore;
+    return seedStore;
+  }
+  return store;
 }
 
 export function appendLedger(event: string, transactionId: string, payload: object) {

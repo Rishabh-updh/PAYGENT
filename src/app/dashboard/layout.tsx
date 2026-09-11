@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   IconHome,
   IconMandate,
@@ -33,8 +33,20 @@ const NAV_ITEMS = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { data } = useFetch<{ stats: DashboardStats }>("/api/dashboard");
+
+  useEffect(() => {
+    const handleReverseNavigation = (event: WheelEvent) => {
+      if (event.deltaY < 0 && window.scrollY <= 4) {
+        event.preventDefault();
+        router.push("/");
+      }
+    };
+    window.addEventListener("wheel", handleReverseNavigation, { passive: false });
+    return () => window.removeEventListener("wheel", handleReverseNavigation);
+  }, [router]);
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
