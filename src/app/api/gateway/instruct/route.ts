@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { appendLedger, getStore, newTransactionId, verifyMandateToken } from "@/lib/payfence-store";
 
 export async function POST(request: Request) {
-  const body = await request.json() as { mandateToken?: string; amount?: number; merchant?: string; idempotencyKey?: string };
+  let body: { mandateToken?: string; amount?: number; merchant?: string; idempotencyKey?: string };
+  try {
+    body = await request.json() as { mandateToken?: string; amount?: number; merchant?: string; idempotencyKey?: string };
+  } catch {
+    return NextResponse.json({ code: "INVALID_JSON", error: "Request body must be valid JSON" }, { status: 400 });
+  }
   if (!body.mandateToken || typeof body.amount !== "number" || !Number.isInteger(body.amount) || body.amount <= 0 || !body.merchant || !body.idempotencyKey) {
     return NextResponse.json({ code: "INVALID_REQUEST", error: "mandateToken, integer amount, merchant, and idempotencyKey are required" }, { status: 400 });
   }

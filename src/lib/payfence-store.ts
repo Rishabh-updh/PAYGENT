@@ -93,8 +93,12 @@ export function verifyMandateToken(token: string, mandate: Mandate) {
   if (!header || !payload || !signature) return false;
   const expected = createHmac("sha256", process.env.JWT_SECRET ?? "payfence-demo-secret").update(`${header}.${payload}`).digest("base64url");
   if (signature !== expected) return false;
-  const claims = JSON.parse(Buffer.from(payload, "base64url").toString()) as { mnd: string; agt: string; scope: string[]; amt: number; exp: number };
-  return claims.mnd === mandate.id && claims.agt === mandate.agent && claims.amt === mandate.maxAmount && claims.exp > Math.floor(Date.now() / 1000);
+  try {
+    const claims = JSON.parse(Buffer.from(payload, "base64url").toString()) as { mnd?: string; agt?: string; amt?: number; exp?: number };
+    return claims.mnd === mandate.id && claims.agt === mandate.agent && claims.amt === mandate.maxAmount && typeof claims.exp === "number" && claims.exp > Math.floor(Date.now() / 1000);
+  } catch {
+    return false;
+  }
 }
 
 export function newTransactionId() {

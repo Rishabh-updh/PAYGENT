@@ -3,7 +3,12 @@ import { createMandateToken, getStore } from "@/lib/payfence-store";
 import { createHash } from "node:crypto";
 
 export async function POST(request: Request) {
-  const body = await request.json() as { agent?: string; merchants?: string[]; maxAmount?: number; validHours?: number };
+  let body: { agent?: string; merchants?: string[]; maxAmount?: number; validHours?: number };
+  try {
+    body = await request.json() as { agent?: string; merchants?: string[]; maxAmount?: number; validHours?: number };
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON" }, { status: 400 });
+  }
   if (!body.agent || !body.merchants?.length || typeof body.maxAmount !== "number" || !Number.isInteger(body.maxAmount) || body.maxAmount <= 0 || typeof body.validHours !== "number" || !Number.isInteger(body.validHours) || body.validHours <= 0) {
     return NextResponse.json({ error: "agent, merchants, maxAmount (paise), and validHours are required" }, { status: 400 });
   }
