@@ -1,6 +1,6 @@
 import { createHash, createHmac, randomUUID } from "node:crypto";
 
-export type TransactionStatus = "pending" | "authorized" | "executed" | "awaiting_approval" | "blocked";
+export type TransactionStatus = "pending" | "authorized" | "executed" | "awaiting_approval" | "blocked" | "reversed";
 
 export type Transaction = {
   id: string;
@@ -11,6 +11,9 @@ export type Transaction = {
   time: string;
   idempotencyKey: string;
   mandateId: string;
+  instructionId?: string;
+  authorizationLevel?: "auto" | "manual" | "escalated";
+  item?: { sku: string; price: number };
 };
 
 export type Mandate = {
@@ -19,8 +22,72 @@ export type Mandate = {
   merchants: string[];
   maxAmount: number;
   validUntil: string;
-  status: "active" | "revoked";
+  validFrom?: string;
+  requestId?: string;
+  status: "active" | "revoked" | "expired";
   token: string;
+  createdAt?: string;
+};
+
+export type EscalationStatus = "pending" | "approved" | "rejected" | "expired";
+
+export type Escalation = {
+  id: string;
+  paymentId: string;
+  mandateId: string;
+  agentId: string;
+  amount: number;
+  merchant: string;
+  reason: string;
+  riskClass: string;
+  status: EscalationStatus;
+  userResponse?: string;
+  responseTimestamp?: string;
+  createdAt: string;
+  /* Store the full pending transaction data so we can execute on approval */
+  pendingTransaction?: Transaction;
+};
+
+export type RefundStatus = "pending" | "auto_approved" | "manual_review" | "completed" | "rejected";
+
+export type RefundRequest = {
+  id: string;
+  paymentId: string;
+  reason: string;
+  evidence?: string;
+  status: RefundStatus;
+  mandateViolation: boolean;
+  processorRefundId?: string;
+  createdAt: string;
+  resolvedAt?: string;
+};
+
+export type AuditEntry = {
+  id: string;
+  paymentId: string;
+  agentId: string;
+  action: string;
+  mandateId: string;
+  amount: number;
+  merchant: string;
+  timestamp: string;
+  authorizationLevel: "auto" | "manual" | "escalated";
+  userId?: string;
+  instructionId?: string;
+  details: Record<string, unknown>;
+};
+
+export type AgentProfile = {
+  id: string;
+  name: string;
+  trustScore: number;
+  tier: "A" | "B" | "C" | "D";
+  effectiveLimit: number;
+  totalPayments: number;
+  successfulPayments: number;
+  disputeCount: number;
+  disputeAmountTotal: number;
+  frozen: boolean;
 };
 
 type Store = {
@@ -28,6 +95,10 @@ type Store = {
   transactions: Transaction[];
   usedIdempotencyKeys: Map<string, string>;
   ledger: { seq: number; event: string; transactionId: string; entryHash: string; prevHash: string; createdAt: string }[];
+  escalations: Escalation[];
+  refundRequests: RefundRequest[];
+  auditLog: AuditEntry[];
+  agents: AgentProfile[];
 };
 
 const globalStore = globalThis as typeof globalThis & { payFenceStore?: Store };
@@ -47,8 +118,10 @@ function makeSeedStore(): Store {
     merchants: ["blinkit.com", "zeptonow.com"],
     maxAmount: 2000,
     validUntil: new Date(Date.now() + 23 * 60 * 60 * 1000).toISOString(),
+    validFrom: new Date().toISOString(),
     status: "active",
     token: "",
+    createdAt: new Date().toISOString(),
   };
   firstMandate.token = createMandateToken(firstMandate.id, firstMandate.agent, firstMandate.merchants, firstMandate.maxAmount, firstMandate.validUntil);
   const secondMandate: Mandate = {
@@ -57,20 +130,29 @@ function makeSeedStore(): Store {
     merchants: ["makemytrip.com"],
     maxAmount: 10000,
     validUntil: new Date(Date.now() + 47 * 60 * 60 * 1000).toISOString(),
+    validFrom: new Date().toISOString(),
     status: "active",
     token: "",
+    createdAt: new Date().toISOString(),
   };
   secondMandate.token = createMandateToken(secondMandate.id, secondMandate.agent, secondMandate.merchants, secondMandate.maxAmount, secondMandate.validUntil);
   return {
     mandates: [firstMandate, secondMandate],
     transactions: [
-      { id: "txn_8f2a", agent: "ShopBot", merchant: "blinkit.com", amount: 1240, status: "executed", time: "Just now", idempotencyKey: "seed_8f2a", mandateId: firstMandate.id },
-      { id: "txn_8f19", agent: "TravelGenie", merchant: "makemytrip.com", amount: 7800, status: "awaiting_approval", time: "2 min ago", idempotencyKey: "seed_8f19", mandateId: secondMandate.id },
-      { id: "txn_8e91", agent: "ShopBot", merchant: "zeptonow.com", amount: 860, status: "executed", time: "8 min ago", idempotencyKey: "seed_8e91", mandateId: firstMandate.id },
-      { id: "txn_8e77", agent: "TravelGenie", merchant: "makemytrip.com", amount: 4200, status: "executed", time: "14 min ago", idempotencyKey: "seed_8e77", mandateId: secondMandate.id },
+      { id: "txn_8f2a", agent: "ShopBot", merchant: "blinkit.com", amount: 1240, status: "executed", time: "Just now", idempotencyKey: "seed_8f2a", mandateId: firstMandate.id, authorizationLevel: "auto" },
+      { id: "txn_8f19", agent: "TravelGenie", merchant: "makemytrip.com", amount: 7800, status: "awaiting_approval", time: "2 min ago", idempotencyKey: "seed_8f19", mandateId: secondMandate.id, authorizationLevel: "escalated" },
+      { id: "txn_8e91", agent: "ShopBot", merchant: "zeptonow.com", amount: 860, status: "executed", time: "8 min ago", idempotencyKey: "seed_8e91", mandateId: firstMandate.id, authorizationLevel: "auto" },
+      { id: "txn_8e77", agent: "TravelGenie", merchant: "makemytrip.com", amount: 4200, status: "executed", time: "14 min ago", idempotencyKey: "seed_8e77", mandateId: secondMandate.id, authorizationLevel: "auto" },
     ],
     usedIdempotencyKeys: new Map(),
     ledger: [],
+    escalations: [],
+    refundRequests: [],
+    auditLog: [],
+    agents: [
+      { id: "agent_shopbot", name: "ShopBot", trustScore: 92, tier: "B", effectiveLimit: 10000, totalPayments: 24, successfulPayments: 23, disputeCount: 1, disputeAmountTotal: 450, frozen: false },
+      { id: "agent_travelgenie", name: "TravelGenie", trustScore: 88, tier: "B", effectiveLimit: 10000, totalPayments: 18, successfulPayments: 17, disputeCount: 1, disputeAmountTotal: 2200, frozen: false },
+    ],
   };
 }
 
@@ -103,4 +185,48 @@ export function verifyMandateToken(token: string, mandate: Mandate) {
 
 export function newTransactionId() {
   return `txn_${randomUUID().slice(0, 8)}`;
+}
+
+/* ── New helpers ── */
+
+export function newId(prefix: string) {
+  return `${prefix}_${randomUUID().slice(0, 8)}`;
+}
+
+export function addAuditEntry(entry: Omit<AuditEntry, "id" | "timestamp">) {
+  const store = getStore();
+  const full: AuditEntry = {
+    ...entry,
+    id: newId("aud"),
+    timestamp: new Date().toISOString(),
+  };
+  store.auditLog.push(full);
+  return full;
+}
+
+export function findAgent(agentNameOrId: string): AgentProfile | undefined {
+  const store = getStore();
+  return store.agents.find(
+    (a) => a.id === agentNameOrId || a.name === agentNameOrId || a.name.toLowerCase() === agentNameOrId.toLowerCase(),
+  );
+}
+
+export function findOrCreateAgent(agentName: string): AgentProfile {
+  const existing = findAgent(agentName);
+  if (existing) return existing;
+  const store = getStore();
+  const agent: AgentProfile = {
+    id: `agent_${agentName.toLowerCase().replace(/\s+/g, "_")}`,
+    name: agentName,
+    trustScore: 85,
+    tier: "B",
+    effectiveLimit: 10000,
+    totalPayments: 0,
+    successfulPayments: 0,
+    disputeCount: 0,
+    disputeAmountTotal: 0,
+    frozen: false,
+  };
+  store.agents.push(agent);
+  return agent;
 }
