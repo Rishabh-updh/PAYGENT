@@ -11,20 +11,20 @@ button { font: inherit; }
 .cinema-brand { color: #fff; font-weight: 750; letter-spacing: .12em; }.cinema-brand span { display: inline-grid; place-items: center; width: 27px; height: 27px; margin-right: 10px; border: 1px solid #b9a5ff; color: #b9a5ff; border-radius: 50%; font-size: 9px; }
 .nav-center { color: #6d7271; }.nav-right { display: flex; gap: 11px; align-items: center; }.status-pip { width: 6px; height: 6px; background: var(--emerald); border-radius: 50%; box-shadow: 0 0 12px var(--emerald); }.nav-divider { width: 1px; height: 13px; background: #343736; }
 .sticky-stage { height: 100vh; position: sticky; top: 0; z-index: 1; overflow: hidden; perspective: 1200px; }
-.stage-grid { position: absolute; inset: 0; opacity: .14; background-image: linear-gradient(rgba(120,230,220,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(120,230,220,.12) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, black, transparent 70%); }
-.story-copy { position: absolute; z-index: 4; top: 20%; left: 8vw; max-width: 490px; }.eyebrow-line { display: flex; align-items: center; gap: 10px; color: var(--dim); font-size: 9px; letter-spacing: .22em; }.eyebrow-line > span { width: 22px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+.stage-grid { position: absolute; inset: 0; opacity: .14; pointer-events: none; background-image: linear-gradient(rgba(120,230,220,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(120,230,220,.12) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, black, transparent 70%); }
+.story-copy { position: absolute; z-index: 4; top: 20%; left: 8vw; max-width: 490px; pointer-events: none; }.eyebrow-line { display: flex; align-items: center; gap: 10px; color: var(--dim); font-size: 9px; letter-spacing: .22em; }.eyebrow-line > span { width: 22px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
 h1, h2 { margin: 20px 0 14px; font-weight: 420; line-height: .94; letter-spacing: -.055em; font-size: clamp(52px, 7vw, 104px); } h1 em, h2 em { color: var(--cyan); font-style: normal; text-shadow: 0 0 30px rgba(114,233,225,.25); }.story-copy p { color: #818786; max-width: 315px; line-height: 1.6; font-size: 14px; }.scroll-hint { display: flex; gap: 9px; align-items: center; margin-top: 42px; color: #aaa; letter-spacing: .18em; font-size: 9px; }
 
 /* ─── Wallet stage: layered architecture ─── */
-.wallet-stage { position: absolute; inset: 0; display: grid; place-items: center; }
+.wallet-stage { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
 
 /* Back of wallet — sits behind cards */
 .wallet-back { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; }
 .wallet-back-layer { position: absolute; bottom: 9%; }
 
 /* Cards container — clipped so cards below the wallet opening are hidden */
-.cards-clipped-container { position: absolute; inset: 0; display: grid; place-items: center; z-index: 5; clip-path: inset(0 0 0 0); }
-.cards-orbit { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: grid; place-items: center; }
+.cards-clipped-container { position: absolute; inset: 0; display: grid; place-items: center; z-index: 5; clip-path: inset(0 0 0 0); pointer-events: none; }
+.cards-orbit { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: grid; place-items: center; pointer-events: none; }
 
 /* Front pocket — covers the lower portion of cards, creating the "inside wallet" illusion */
 .wallet-front-pocket {
@@ -42,8 +42,9 @@ h1, h2 { margin: 20px 0 14px; font-weight: 420; line-height: .94; letter-spacing
   transform-origin: center top;
 }
 
-.holo-card { width: 230px; height: 325px; position: absolute; padding: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); background: linear-gradient(145deg, rgba(240,250,250,.22), rgba(100,120,123,.05) 56%, rgba(0,0,0,.28)); box-shadow: inset 0 0 35px rgba(255,255,255,.11), 0 0 55px var(--card-glow); cursor: pointer; transition: box-shadow 0.3s ease; will-change: transform; }
-.holo-card:hover { box-shadow: inset 0 0 35px rgba(255,255,255,.16), 0 0 80px var(--card-glow), 0 0 120px var(--card-glow); }
+.holo-card { width: 230px; height: 325px; position: absolute; padding: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); background: linear-gradient(145deg, rgba(240,250,250,.22), rgba(100,120,123,.05) 56%, rgba(0,0,0,.28)); box-shadow: inset 0 0 35px rgba(255,255,255,.11), 0 0 55px var(--card-glow); cursor: pointer; pointer-events: auto; will-change: transform; transform-origin: center center; }
+.card-hovered { box-shadow: inset 0 0 35px rgba(255,255,255,.18), 0 0 90px var(--card-glow), 0 0 140px var(--card-glow), 0 20px 40px rgba(0,0,0,.5); border-color: rgba(255,255,255,.6); }
+.holo-card:hover .card-shine { opacity: .45; }
 .card-cyan { --card-glow: rgba(114,233,225,.22); }.card-gold { --card-glow: rgba(231,184,117,.22); }.card-emerald { --card-glow: rgba(120,216,172,.22); }.card-violet { --card-glow: rgba(182,152,255,.23); }.card-blue { --card-glow: rgba(115,180,255,.22); }
 .card-shine { position: absolute; inset: 0; background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.25) 48%, transparent 54%); opacity: .25; }.card-top, .card-bottom { display: flex; justify-content: space-between; align-items: center; }.card-chip { width: 31px; height: 24px; border: 1px solid rgba(255,255,255,.65); border-radius: 5px; background: linear-gradient(135deg, #d6bd7f, #597269); box-shadow: 0 0 12px var(--card-glow); }.card-contact { color: var(--cyan); font-size: 24px; }.card-label { margin-top: 92px; color: #bcc9c8; font-size: 8px; letter-spacing: .22em; }.card-name { margin-top: 8px; font-size: 19px; }.card-number { margin-top: 34px; color: #d6dbd9; font-size: 13px; letter-spacing: .17em; }.card-bottom { position: absolute; bottom: 20px; left: 22px; right: 22px; color: var(--card-color, #d4e7e1); font-size: 15px; }.card-cyan .card-bottom { color: var(--cyan); }.card-gold .card-bottom { color: var(--gold); }.card-emerald .card-bottom { color: var(--emerald); }.card-violet .card-bottom { color: var(--violet); }.card-symbol { font-size: 11px; letter-spacing: .12em; }
 

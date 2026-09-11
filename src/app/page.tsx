@@ -80,55 +80,58 @@ function HoloCard({
   };
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
-  /* ── Magnetic cursor state ── */
+  /* ── Magnetic cursor tracking (spring-based) ── */
   const magnetX = useMotionValue(0);
   const magnetY = useMotionValue(0);
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
 
-  // Refined natural spring physics for magnetic effect
-  const springX = useSpring(magnetX, { stiffness: 150, damping: 15, mass: 0.2 });
-  const springY = useSpring(magnetY, { stiffness: 150, damping: 15, mass: 0.2 });
-  const springTiltX = useSpring(tiltX, { stiffness: 150, damping: 15, mass: 0.2 });
-  const springTiltY = useSpring(tiltY, { stiffness: 150, damping: 15, mass: 0.2 });
+  // Fluid spring config — lower stiffness + higher damping = smooth, natural tracking
+  const springX = useSpring(magnetX, { stiffness: 120, damping: 14, mass: 0.5 });
+  const springY = useSpring(magnetY, { stiffness: 120, damping: 14, mass: 0.5 });
+  const springTiltX = useSpring(tiltX, { stiffness: 150, damping: 16, mass: 0.35 });
+  const springTiltY = useSpring(tiltY, { stiffness: 150, damping: 16, mass: 0.35 });
 
-  /* ── Hover pop-out state ── */
-  const scale = useSpring(1, { stiffness: 200, damping: 18 });
-  const popY = useSpring(0, { stiffness: 200, damping: 18 });
-  const [zIndex, setZIndex] = useState(10 - Math.abs(index - 3.5));
+  /* ── Pop-out hover springs (scale + lift) ── */
+  const hoverScale = useMotionValue(1);
+  const hoverLift = useMotionValue(0);
+  const springScale = useSpring(hoverScale, { stiffness: 260, damping: 22, mass: 0.3 });
+  const springLift = useSpring(hoverLift, { stiffness: 260, damping: 22, mass: 0.3 });
 
-  const handleMouseEnter = () => {
-    scale.set(1.08);
-    popY.set(-25);
-    setZIndex(50);
-  };
-
-  const handleMouseMove = useCallback(
-    (e: React.MouseEvent) => {
+  // Using onPointerMove/onPointerLeave ensures event delegation works on every card
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
       if (!cardRef.current) return;
       const rect = cardRef.current.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
       const dx = e.clientX - cx;
       const dy = e.clientY - cy;
-      magnetX.set(dx * 0.15); // Fluid cursor tracking
-      magnetY.set(dy * 0.15);
-      tiltY.set((dx / rect.width) * 12);
+      magnetX.set(dx * 0.22);
+      magnetY.set(dy * 0.22);
+      tiltY.set((dx / rect.width) * 16);
       tiltX.set(-(dy / rect.height) * 12);
     },
     [magnetX, magnetY, tiltX, tiltY],
   );
 
-  const handleMouseLeave = useCallback(() => {
-    scale.set(1);
-    popY.set(0);
-    setZIndex(10 - Math.abs(index - 3.5));
+  const handlePointerEnter = useCallback(() => {
+    setIsHovered(true);
+    hoverScale.set(1.1);
+    hoverLift.set(-30);
+  }, [hoverScale, hoverLift]);
+
+  const handlePointerLeave = useCallback(() => {
+    setIsHovered(false);
     magnetX.set(0);
     magnetY.set(0);
     tiltX.set(0);
     tiltY.set(0);
-  }, [magnetX, magnetY, tiltX, tiltY, scale, popY, index]);
+    hoverScale.set(1);
+    hoverLift.set(0);
+  }, [magnetX, magnetY, tiltX, tiltY, hoverScale, hoverLift]);
 
   /* ── Scroll-driven animation values ── */
   // Phase 1 (0 → 0.35): cards rise vertically out of the wallet
@@ -142,55 +145,50 @@ function HoloCard({
 
   // No rotation at any point — strict horizontal alignment
   const opacity = useTransform(progress, [0, 0.08], [0, 1]);
-  
-  // Combine magnetic spring Y and hover pop Y
-  const innerY = useTransform([springY, popY], ([sY, pY]) => (sY as number) + (pY as number));
+
+  // Dynamic z-index: hovered card goes to the top
+  const baseZ = 10 - Math.abs(index - 3.5);
+  const dynamicZ = isHovered ? 50 : baseZ;
 
   return (
-    <motion.div
+    <motion.article
+      ref={cardRef}
+      className={`holo-card card-${card.tone} ${active ? "card-placeholder" : ""} ${isHovered ? "card-hovered" : ""}`}
+      layoutId={`feature-card-${feature.id}`}
+      onClick={onOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") onOpen();
+      }}
+      onPointerMove={handlePointerMove}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       style={{
-        position: "absolute",
-        x: spreadX,
         y: revealY,
-        zIndex,
+        x: spreadX,
+        translateX: springX,
+        translateY: springLift,
+        rotateX: springTiltX,
+        rotateY: springTiltY,
+        scale: springScale,
+        opacity: active ? 0 : opacity,
+        zIndex: dynamicZ,
       }}
     >
-      <motion.article
-        ref={cardRef}
-        className={`holo-card card-${card.tone} ${active ? "card-placeholder" : ""}`}
-        layoutId={`feature-card-${feature.id}`}
-        onClick={onOpen}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(event) => {
-          if (event.key === "Enter" || event.key === " ") onOpen();
-        }}
-        onMouseEnter={handleMouseEnter}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          x: springX,
-          y: innerY,
-          rotateX: springTiltX,
-          rotateY: springTiltY,
-          scale,
-          opacity: active ? 0 : opacity,
-        }}
-      >
-        <div className="card-shine" />
-        <div className="card-top">
-          <span className="card-chip" />
-          <span className="card-contact">◌</span>
-        </div>
-        <div className="card-label">{card.type}</div>
-        <div className="card-name">{card.name}</div>
-        <div className="card-number">{card.number}</div>
-        <div className="card-bottom">
-          <span>{card.amount}</span>
-          <span className="card-symbol">PF</span>
-        </div>
-      </motion.article>
-    </motion.div>
+      <div className="card-shine" />
+      <div className="card-top">
+        <span className="card-chip" />
+        <span className="card-contact">◌</span>
+      </div>
+      <div className="card-label">{card.type}</div>
+      <div className="card-name">{card.name}</div>
+      <div className="card-number">{card.number}</div>
+      <div className="card-bottom">
+        <span>{card.amount}</span>
+        <span className="card-symbol">PF</span>
+      </div>
+    </motion.article>
   );
 }
 
