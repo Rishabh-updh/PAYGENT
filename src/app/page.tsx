@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useRef, useState } from "react";
 
 const PAYFENCE_FEATURES = [
@@ -216,6 +217,10 @@ export default function Home() {
         <div className="nav-center">PAYMENT RELIABILITY LAYER</div>
         <div className="nav-right">
           <span className="status-pip" /> MONAD TESTNET <span className="nav-divider" /> <span>01 / 03</span>
+          <span className="nav-divider" />
+          <Link href="/dashboard" style={{ color: "var(--cyan)", textDecoration: "none", letterSpacing: ".1em", fontSize: 10 }}>
+            DASHBOARD →
+          </Link>
         </div>
       </header>
       <section className="sticky-stage">
