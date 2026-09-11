@@ -145,9 +145,9 @@
 /* ─── Holographic dashboard module deck ─── */
 .pg-module-deck { margin: 0 0 38px; }
 .pg-deck-heading { display: flex; justify-content: space-between; color: #526261; font-size: 9px; letter-spacing: .18em; margin-bottom: 12px; }
-.pg-module-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+.pg-module-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .pg-module-card {
-  position: relative; min-height: 210px; overflow: hidden; padding: 19px; text-align: left;
+  position: relative; min-height: 240px; overflow: hidden; padding: 24px; text-align: left;
   display: flex; flex-direction: column; align-items: flex-start; border-radius: 17px;
   border: 1px solid rgba(190,240,235,.17); color: #eef8f5; cursor: pointer;
   background: linear-gradient(145deg, rgba(214,245,240,.13), rgba(77,117,115,.06) 48%, rgba(0,0,0,.4));

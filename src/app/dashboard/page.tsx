@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useFetch } from "@/lib/use-fetch";
 import { IconAgent, IconApproval, IconDispute, IconHome, IconLedger, IconMandate, IconStorm } from "@/app/icons";
+import "./dashboard.css";
 
 type DashboardData = {
   mandates: { id: string; agent: string; merchants: string[]; maxAmount: number; status: string }[];

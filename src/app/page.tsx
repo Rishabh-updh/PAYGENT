@@ -4,8 +4,8 @@ import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll
 import { ShieldCheck, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import OverviewPage from "./dashboard/page";
 
 const PAYFENCE_FEATURES = [
   {
@@ -290,9 +290,6 @@ function HoloCard({
 
 export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
-  const dashboardOpened = useRef(false);
-  const [isLeaving, setIsLeaving] = useState(false);
   const [activeCard, setActiveCard] = useState<(typeof PAYFENCE_FEATURES)[number] | null>(null);
   const [orbitRadius, setOrbitRadius] = useState(150);
   const [orbitVerticalRadius, setOrbitVerticalRadius] = useState(230);
@@ -306,19 +303,6 @@ export default function Home() {
   const stageScale = useTransform(progress, [0, 0.5, 1], [0.86, 1, 0.92]);
   const walletScale = useTransform(progress, [0, 0.32, 0.65, 1], [1, 1.08, 0.72, 0.72]);
   const orbitLabelOpacity = useTransform(progress, [0.62, 0.76], [0, 1]);
-  const openDashboard = useCallback(() => {
-    if (isLeaving) return;
-    sessionStorage.setItem("paygent-route-handoff", "1");
-    setIsLeaving(true);
-    window.setTimeout(() => router.push("/dashboard"), 420);
-  }, [isLeaving, router]);
-
-  useMotionValueEvent(progress, "change", (value) => {
-    if (value >= 0.995 && !dashboardOpened.current) {
-      dashboardOpened.current = true;
-      openDashboard();
-    }
-  }, [openDashboard]);
 
   const handleOrbitTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
     if (event.touches.length < 2) return;
@@ -354,7 +338,7 @@ export default function Home() {
       <div className="cinematic-track" ref={trackRef}>
         <header className="cinema-nav">
           <div className="cinema-brand">
-            <Image className="brand-logo" src="/paygent-logo.png" alt="" width={22} height={30} priority />
+            <Image className="brand-logo" src="/paygent-logo.png" alt="" width={38} height={52} priority />
           </div>
         </header>
         <section className="sticky-stage">
@@ -377,6 +361,27 @@ export default function Home() {
           <motion.div className="orbit-label" style={{ opacity: orbitLabelOpacity }}>
             <Sparkles size={14} /> MANDATES REVEALED <span>08 ACTIVE CREDENTIALS</span>
           </motion.div>
+
+          <motion.div className="telemetry-block top-right" style={{ opacity: titleOpacity }}>
+            <div className="tel-label">NETWORK THROUGHPUT</div>
+            <div className="tel-value">12.4<span className="tel-unit">k/s</span></div>
+            <div className="tel-bars">
+              <div className="tel-bar" style={{ height: '40%' }}></div>
+              <div className="tel-bar" style={{ height: '70%' }}></div>
+              <div className="tel-bar" style={{ height: '50%' }}></div>
+              <div className="tel-bar active" style={{ height: '90%' }}></div>
+              <div className="tel-bar" style={{ height: '60%' }}></div>
+              <div className="tel-bar" style={{ height: '80%' }}></div>
+              <div className="tel-bar" style={{ height: '30%' }}></div>
+            </div>
+          </motion.div>
+          
+          <motion.div className="telemetry-block bottom-left" style={{ opacity: titleOpacity }}>
+            <div className="tel-label">CRYPTOGRAPHIC PROOF</div>
+            <div className="tel-value">SECURE ENCLAVE</div>
+            <div className="tel-crypto">SHA-256: 3a9b8f...21c9a</div>
+            <div className="tel-crypto">IDEMPOTENCY: ACTIVE</div>
+          </motion.div>
           <motion.div className="wallet-stage" style={{ scale: stageScale }}>
             <div className="wallet-back">
               <motion.div className="leather-wallet wallet-back-layer" style={{ scale: walletScale }}>
@@ -385,7 +390,7 @@ export default function Home() {
                   <div className="slot-glow" />
                 </div>
                 <div className="wallet-body">
-                  <Image className="wallet-mark" src="/paygent-logo.png" alt="PAYGENT" width={42} height={58} />
+                  <Image className="wallet-mark" src="/paygent-logo.png" alt="PAYGENT" width={54} height={74} />
                 </div>
               </motion.div>
             </div>
@@ -412,31 +417,14 @@ export default function Home() {
               </div>
             </div>
             <motion.div className="wallet-front-pocket" style={{ scale: walletScale }} />
-            <Image className="wallet-center-logo" src="/paygent-logo.png" alt="PAYGENT" width={54} height={74} />
+            <Image className="wallet-center-logo" src="/paygent-logo.png" alt="PAYGENT" width={72} height={98} />
             <div className="stage-shadow" />
           </motion.div>
         </section>
       </div>
-      <section className="dashboard-cta">
-        <div className="dashboard-cta-inner">
-          <div className="dashboard-cta-kicker">PAYGENT CONTROL CENTER</div>
-          <h2>See every payment<br /><em>held to account.</em></h2>
-          <p>Move from the wallet animation into the live reliability dashboard.</p>
-          <Link className="dashboard-cta-button" href="/dashboard" onClick={(event) => { event.preventDefault(); openDashboard(); }}>
-            OPEN DASHBOARD <span>→</span>
-          </Link>
-        </div>
+      <section className="pg-main" style={{ marginLeft: 0, paddingBottom: 100 }}>
+        <OverviewPage />
       </section>
-      <AnimatePresence>
-        {isLeaving && (
-          <motion.div
-            className="route-transition-veil"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.42, ease: [0.22, 0.61, 0.36, 1] }}
-          />
-        )}
-      </AnimatePresence>
       <AnimatePresence>
         {activeCard && (
           <motion.div className="feature-modal-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveCard(null)}>

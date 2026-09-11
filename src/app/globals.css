@@ -74,6 +74,19 @@ h1, h2 { margin: 20px 0 14px; font-weight: 420; line-height: .94; letter-spacing
 .orbit-label { position: absolute; z-index: 11; right: 8vw; top: 13%; display: flex; align-items: center; gap: 9px; color: var(--cyan); letter-spacing: .15em; font-size: 9px; }.orbit-label span { color: #767c7b; margin-left: 12px; }
 .stage-footer { position: absolute; z-index: 12; left: 8vw; right: 8vw; bottom: 4%; display: flex; justify-content: space-between; color: #666d6c; letter-spacing: .13em; font-size: 9px; }.stage-footer span { display: flex; align-items: center; gap: 7px; }.stage-footer svg { color: var(--cyan); }.stage-footer b { color: #c2c6c4; margin-left: 8px; }
 .card-placeholder { pointer-events: none; }
+
+/* ─── Telemetry Infographics ─── */
+.telemetry-block { position: absolute; z-index: 11; display: flex; flex-direction: column; gap: 6px; pointer-events: none; }
+.telemetry-block.top-right { right: 8vw; top: 35%; text-align: right; align-items: flex-end; }
+.telemetry-block.bottom-left { left: 8vw; bottom: 20%; }
+.tel-label { color: #5a6362; font-size: 9px; letter-spacing: .2em; font-family: var(--font-geist-mono, monospace); }
+.tel-value { color: var(--cyan); font-size: 32px; font-weight: 300; letter-spacing: -.02em; font-family: var(--font-geist-mono, monospace); }
+.tel-unit { font-size: 12px; margin-left: 6px; color: #6d7271; }
+.tel-bars { display: flex; align-items: flex-end; gap: 4px; height: 38px; margin-top: 4px; }
+.tel-bar { width: 4px; background: rgba(114,233,225,.12); border-radius: 2px; }
+.tel-bar.active { background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+.tel-crypto { color: #767c7b; font-size: 10px; letter-spacing: .1em; font-family: var(--font-geist-mono, monospace); margin-top: 2px; }
+
 .feature-modal-layer { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; }.feature-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }.feature-modal { width: min(680px, 100%); min-height: 420px; position: relative; z-index: 1; overflow: hidden; padding: clamp(30px, 6vw, 68px); border: 1px solid rgba(114,233,225,.36); border-radius: 24px; background: linear-gradient(145deg, rgba(27,42,43,.84), rgba(3,7,8,.93)); box-shadow: 0 0 70px rgba(114,233,225,.16), inset 0 0 55px rgba(255,255,255,.06); }.feature-modal::before { content: ""; position: absolute; width: 230px; height: 230px; right: -80px; top: -90px; border-radius: 50%; background: var(--cyan); opacity: .13; filter: blur(45px); }.modal-close { position: absolute; top: 18px; right: 22px; border: 0; background: transparent; color: #bac5c4; font-size: 28px; line-height: 1; cursor: pointer; }.modal-kicker { display: flex; align-items: center; gap: 9px; color: var(--cyan); font-size: 9px; letter-spacing: .2em; }.modal-kicker span { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }.modal-index { position: absolute; right: 25px; top: 67px; color: #66716f; font-size: 10px; letter-spacing: .15em; }.feature-modal h2 { max-width: 540px; margin: 32px 0 10px; font-size: clamp(42px, 7vw, 78px); }.modal-subtitle { color: var(--gold); font-size: 15px; letter-spacing: .04em; }.modal-description { max-width: 500px; color: #adb7b5; font-size: 15px; line-height: 1.75; }.modal-proof { display: flex; align-items: center; gap: 9px; margin-top: 38px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.12); color: #7d8b88; font-size: 11px; }.modal-proof svg { color: var(--emerald); }.modal-proof b { margin-left: auto; color: var(--emerald); font-size: 9px; letter-spacing: .18em; }
 
 @media (max-width: 800px) {
