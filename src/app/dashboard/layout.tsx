@@ -35,7 +35,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isHandoff, setIsHandoff] = useState(false);
   const { data } = useFetch<{ stats: DashboardStats }>("/api/dashboard");
+
+  useEffect(() => {
+    if (sessionStorage.getItem("paygent-route-handoff") !== "1") return;
+    sessionStorage.removeItem("paygent-route-handoff");
+    const startTimer = window.setTimeout(() => setIsHandoff(true), 0);
+    const endTimer = window.setTimeout(() => setIsHandoff(false), 650);
+    return () => {
+      window.clearTimeout(startTimer);
+      window.clearTimeout(endTimer);
+    };
+  }, []);
 
   useEffect(() => {
     const handleReverseNavigation = (event: WheelEvent) => {
@@ -106,7 +118,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       </nav>
 
       {/* Main content area — scrolls independently */}
-      <main className="pg-main">
+      <main className={`pg-main ${isHandoff ? "pg-main-handoff" : ""}`}>
         {children}
       </main>
     </>

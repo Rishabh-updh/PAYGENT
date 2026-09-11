@@ -292,6 +292,7 @@ export default function Home() {
   const trackRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const dashboardOpened = useRef(false);
+  const [isLeaving, setIsLeaving] = useState(false);
   const [activeCard, setActiveCard] = useState<(typeof PAYFENCE_FEATURES)[number] | null>(null);
   const [orbitRadius, setOrbitRadius] = useState(150);
   const [orbitVerticalRadius, setOrbitVerticalRadius] = useState(230);
@@ -305,13 +306,19 @@ export default function Home() {
   const stageScale = useTransform(progress, [0, 0.5, 1], [0.86, 1, 0.92]);
   const walletScale = useTransform(progress, [0, 0.32, 0.65, 1], [1, 1.08, 0.72, 0.72]);
   const orbitLabelOpacity = useTransform(progress, [0.62, 0.76], [0, 1]);
+  const openDashboard = useCallback(() => {
+    if (isLeaving) return;
+    sessionStorage.setItem("paygent-route-handoff", "1");
+    setIsLeaving(true);
+    window.setTimeout(() => router.push("/dashboard"), 420);
+  }, [isLeaving, router]);
 
   useMotionValueEvent(progress, "change", (value) => {
     if (value >= 0.995 && !dashboardOpened.current) {
       dashboardOpened.current = true;
-      router.push("/dashboard");
+      openDashboard();
     }
-  });
+  }, [openDashboard]);
 
   const handleOrbitTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
     if (event.touches.length < 2) return;
@@ -415,9 +422,21 @@ export default function Home() {
           <div className="dashboard-cta-kicker">PAYGENT CONTROL CENTER</div>
           <h2>See every payment<br /><em>held to account.</em></h2>
           <p>Move from the wallet animation into the live reliability dashboard.</p>
-          <Link className="dashboard-cta-button" href="/dashboard">OPEN DASHBOARD <span>→</span></Link>
+          <Link className="dashboard-cta-button" href="/dashboard" onClick={(event) => { event.preventDefault(); openDashboard(); }}>
+            OPEN DASHBOARD <span>→</span>
+          </Link>
         </div>
       </section>
+      <AnimatePresence>
+        {isLeaving && (
+          <motion.div
+            className="route-transition-veil"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.42, ease: [0.22, 0.61, 0.36, 1] }}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {activeCard && (
           <motion.div className="feature-modal-layer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveCard(null)}>

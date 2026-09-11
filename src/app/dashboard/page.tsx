@@ -1,6 +1,10 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
+import { useState } from "react";
 import { useFetch } from "@/lib/use-fetch";
+import { IconAgent, IconApproval, IconDispute, IconHome, IconLedger, IconMandate, IconStorm } from "@/app/icons";
 
 type DashboardData = {
   mandates: { id: string; agent: string; merchants: string[]; maxAmount: number; status: string }[];
@@ -19,12 +23,24 @@ const STATUS_BADGE: Record<string, string> = {
   reversed: "pg-badge-reversed",
 };
 
+const DASHBOARD_MODULES = [
+  { href: "/dashboard", label: "Overview", eyebrow: "01 / CONTROL", description: "A live pulse of mandates, agents, approvals, and payment activity.", icon: IconHome, tone: "cyan" },
+  { href: "/dashboard/mandates", label: "Mandates", eyebrow: "02 / AUTHORITY", description: "Bounded payment credentials with merchant, amount, and expiry controls.", icon: IconMandate, tone: "gold" },
+  { href: "/dashboard/agents", label: "Agents", eyebrow: "03 / TRUST", description: "Trust tiers, effective limits, and instant global freeze controls.", icon: IconAgent, tone: "emerald" },
+  { href: "/dashboard/approvals", label: "Approvals", eyebrow: "04 / HUMAN LOOP", description: "Payment decisions waiting for a clear, accountable approval.", icon: IconApproval, tone: "violet" },
+  { href: "/dashboard/console", label: "Console", eyebrow: "05 / SIMULATE", description: "Stress-test idempotency and watch retries collapse into one payment.", icon: IconStorm, tone: "cyan" },
+  { href: "/dashboard/ledger", label: "Ledger", eyebrow: "06 / PROOF", description: "Tamper-evident payment history with verifiable event hashes.", icon: IconLedger, tone: "gold" },
+  { href: "/dashboard/disputes", label: "Disputes", eyebrow: "07 / RECONCILE", description: "Investigate exceptions and keep the trust layer honest.", icon: IconDispute, tone: "emerald" },
+] as const;
+
 export default function OverviewPage() {
   const { data, loading, error } = useFetch<DashboardData>("/api/dashboard");
+  const [activeModule, setActiveModule] = useState<(typeof DASHBOARD_MODULES)[number] | null>(null);
 
   if (loading) return <div className="pg-loading">Loading overview…</div>;
   if (error) return <div className="pg-error">{error}</div>;
   if (!data) return <div className="pg-empty">No data available</div>;
+  const ActiveModuleIcon = activeModule?.icon;
 
   return (
     <>
@@ -34,6 +50,35 @@ export default function OverviewPage() {
           <div className="pg-page-subtitle">PAYGENT payment reliability dashboard</div>
         </div>
       </div>
+
+      <section className="pg-module-deck" aria-label="Dashboard sections">
+        <div className="pg-deck-heading">
+          <span>RELIABILITY SURFACE</span>
+          <span>SELECT A LAYER TO INSPECT</span>
+        </div>
+        <div className="pg-module-grid">
+          {DASHBOARD_MODULES.map((module, index) => {
+            const Icon = module.icon;
+            return (
+              <motion.button
+                key={module.href}
+                className={`pg-module-card pg-module-${module.tone}`}
+                onClick={() => setActiveModule(module)}
+                whileHover={{ y: -5, scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{ type: "spring", stiffness: 260, damping: 20 }}
+              >
+                <span className="pg-module-index">0{index + 1}</span>
+                <span className="pg-module-icon"><Icon /></span>
+                <span className="pg-module-eyebrow">{module.eyebrow}</span>
+                <span className="pg-module-label">{module.label}</span>
+                <span className="pg-module-description">{module.description}</span>
+                <span className="pg-module-open">OPEN LAYER <b>↗</b></span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Stat cards */}
       <div className="pg-stats-row">
@@ -116,6 +161,30 @@ export default function OverviewPage() {
           </tbody>
         </table>
       )}
+
+      <AnimatePresence>
+        {activeModule && (
+          <motion.div className="pg-module-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActiveModule(null)}>
+            <motion.div
+              className={`pg-module-modal pg-module-${activeModule.tone}`}
+              initial={{ opacity: 0, scale: 0.82, y: 35, rotateX: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0, rotateX: 0 }}
+              exit={{ opacity: 0, scale: 0.86, y: 25, rotateX: -8 }}
+              transition={{ type: "spring", stiffness: 190, damping: 22 }}
+              onClick={(event) => event.stopPropagation()}
+            >
+              <button className="pg-modal-close" onClick={() => setActiveModule(null)} aria-label="Close layer">×</button>
+              <div className="pg-module-modal-mark">{ActiveModuleIcon ? <ActiveModuleIcon /> : null}</div>
+              <div className="pg-module-eyebrow">{activeModule.eyebrow}</div>
+              <h2 className="pg-module-modal-title">{activeModule.label}</h2>
+              <p className="pg-module-modal-copy">{activeModule.description}</p>
+              <Link className="pg-btn pg-btn-primary" href={activeModule.href} onClick={() => setActiveModule(null)}>
+                ENTER {activeModule.label.toUpperCase()} <span>↗</span>
+              </Link>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

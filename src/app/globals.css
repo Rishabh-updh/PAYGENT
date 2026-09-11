@@ -3,7 +3,7 @@
 :root { --void: #000; --white: #f4f4f0; --dim: #777979; --cyan: #72e9e1; --gold: #e7b875; --emerald: #78d8ac; --violet: #b698ff; }
 * { box-sizing: border-box; }
 html { scroll-behavior: auto; }
-body { margin: 0; background: var(--void); color: var(--white); font-family: var(--font-geist-sans, Arial, sans-serif); }
+body { margin: 0; background: #030404; color: var(--white); font-family: var(--font-geist-sans, Arial, sans-serif); }
 button { font: inherit; }
 .cinematic-page { position: relative; background: #000; min-height: 100vh; overflow: clip; }
 .cinematic-track { min-height: 550vh; position: relative; }
@@ -61,13 +61,14 @@ h1, h2 { margin: 20px 0 14px; font-weight: 420; line-height: .94; letter-spacing
 /* Leather wallet base styles (shared by back layer) */
 .leather-wallet { width: 315px; height: 235px; border-radius: 13px 13px 22px 22px; background: radial-gradient(ellipse at 48% 25%, #97643c, #5c321b 60%, #32170d); border: 2px solid #8e5630; box-shadow: inset 0 0 26px rgba(0,0,0,.52), 0 23px 45px rgba(0,0,0,.7), 0 0 75px rgba(140,82,42,.18); }.wallet-stitch { position: absolute; inset: 7px; border: 1px dashed rgba(223,161,105,.5); border-radius: 9px 9px 18px 18px; }.wallet-slot { position: absolute; top: -2px; left: 20px; right: 20px; height: 55px; border-radius: 5px 5px 0 0; background: #160b07; box-shadow: inset 0 6px 13px #000; }.slot-glow { position: absolute; left: 18%; right: 18%; top: 0; height: 2px; background: var(--gold); box-shadow: 0 0 16px var(--gold); }.wallet-body { position: absolute; inset: 75px 0 0; display: flex; align-items: center; justify-content: center; }.wallet-mark { width: 42px; height: 58px; object-fit: contain; opacity: .82; filter: sepia(1) saturate(2.1) hue-rotate(350deg) brightness(1.15) drop-shadow(0 0 5px rgba(231,184,117,.35)); }
 .wallet-center-logo { position: absolute; z-index: 11; top: 50%; left: 50%; width: 54px; height: 74px; object-fit: contain; transform: translate(-50%, -50%); opacity: .9; filter: sepia(1) saturate(2.1) hue-rotate(350deg) brightness(1.15) drop-shadow(0 0 6px rgba(231,184,117,.4)); pointer-events: none; }
-.dashboard-cta { min-height: 100vh; display: grid; place-items: center; padding: 100px 8vw; background: radial-gradient(circle at 50% 35%, rgba(114,233,225,.09), transparent 42%), #020303; border-top: 1px solid rgba(255,255,255,.1); }
+.dashboard-cta { min-height: 100vh; display: grid; place-items: center; padding: 100px 8vw; background: radial-gradient(ellipse at 50% 0%, rgba(114,233,225,.11), transparent 42%), linear-gradient(#050908, #030404); border-top: 0; }
 .dashboard-cta-inner { width: min(760px, 100%); text-align: center; }
 .dashboard-cta-kicker { color: var(--cyan); font-size: 10px; letter-spacing: .24em; }
 .dashboard-cta h2 { margin: 24px 0 18px; font-size: clamp(48px, 8vw, 94px); }
 .dashboard-cta p { max-width: 410px; margin: 0 auto 32px; color: #899290; line-height: 1.7; font-size: 15px; }
 .dashboard-cta-button { display: inline-flex; align-items: center; gap: 28px; padding: 15px 20px; color: #050707; background: var(--cyan); font-size: 10px; font-weight: 700; letter-spacing: .16em; text-decoration: none; box-shadow: 0 0 28px rgba(114,233,225,.2); }
 .dashboard-cta-button span { font-size: 18px; line-height: 0; }
+.route-transition-veil { position: fixed; inset: 0; z-index: 100; pointer-events: none; background: radial-gradient(ellipse at 50% 48%, rgba(114,233,225,.16), transparent 34%), radial-gradient(ellipse at 50% 62%, rgba(140,82,42,.2), transparent 52%), rgba(3,7,7,.94); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
 .stage-shadow { position: absolute; bottom: calc(50% - 155px); width: 430px; height: 40px; border-radius: 50%; background: rgba(91,44,20,.36); filter: blur(24px); z-index: 1; }
 
 .orbit-label { position: absolute; z-index: 11; right: 8vw; top: 13%; display: flex; align-items: center; gap: 9px; color: var(--cyan); letter-spacing: .15em; font-size: 9px; }.orbit-label span { color: #767c7b; margin-left: 12px; }
