@@ -14,14 +14,67 @@ button { font: inherit; }
 .stage-grid { position: absolute; inset: 0; opacity: .14; background-image: linear-gradient(rgba(120,230,220,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(120,230,220,.12) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, black, transparent 70%); }
 .story-copy { position: absolute; z-index: 4; top: 20%; left: 8vw; max-width: 490px; }.eyebrow-line { display: flex; align-items: center; gap: 10px; color: var(--dim); font-size: 9px; letter-spacing: .22em; }.eyebrow-line > span { width: 22px; height: 1px; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
 h1, h2 { margin: 20px 0 14px; font-weight: 420; line-height: .94; letter-spacing: -.055em; font-size: clamp(52px, 7vw, 104px); } h1 em, h2 em { color: var(--cyan); font-style: normal; text-shadow: 0 0 30px rgba(114,233,225,.25); }.story-copy p { color: #818786; max-width: 315px; line-height: 1.6; font-size: 14px; }.scroll-hint { display: flex; gap: 9px; align-items: center; margin-top: 42px; color: #aaa; letter-spacing: .18em; font-size: 9px; }
-.wallet-stage { position: absolute; inset: 0; transform-style: preserve-3d; display: grid; place-items: center; }.cards-orbit { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: grid; place-items: center; transform-style: preserve-3d; }
-.holo-card { width: 230px; height: 325px; position: absolute; padding: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; transform-style: preserve-3d; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); background: linear-gradient(145deg, rgba(240,250,250,.22), rgba(100,120,123,.05) 56%, rgba(0,0,0,.28)); box-shadow: inset 0 0 35px rgba(255,255,255,.11), 0 0 55px var(--card-glow); }
+
+/* ─── Wallet stage: layered architecture ─── */
+.wallet-stage { position: absolute; inset: 0; display: grid; place-items: center; }
+
+/* Back of wallet — sits behind cards */
+.wallet-back { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; }
+.wallet-back-layer { position: absolute; bottom: 9%; }
+
+/* Cards container — clipped so cards below the wallet opening are hidden */
+.cards-clipped-container { position: absolute; inset: 0; display: grid; place-items: center; z-index: 5; clip-path: inset(0 0 0 0); }
+.cards-orbit { position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: grid; place-items: center; }
+
+/* Front pocket — covers the lower portion of cards, creating the "inside wallet" illusion */
+.wallet-front-pocket {
+  position: absolute;
+  z-index: 10;
+  bottom: 9%;
+  width: 315px;
+  height: 160px;
+  border-radius: 0 0 22px 22px;
+  background: radial-gradient(ellipse at 48% 25%, #97643c, #5c321b 60%, #32170d);
+  border: 2px solid #8e5630;
+  border-top: none;
+  box-shadow: inset 0 -10px 26px rgba(0,0,0,.52), 0 23px 45px rgba(0,0,0,.7);
+  pointer-events: none;
+  transform-origin: center top;
+}
+
+.holo-card { width: 230px; height: 325px; position: absolute; padding: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.42); border-radius: 15px; backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px); background: linear-gradient(145deg, rgba(240,250,250,.22), rgba(100,120,123,.05) 56%, rgba(0,0,0,.28)); box-shadow: inset 0 0 35px rgba(255,255,255,.11), 0 0 55px var(--card-glow); cursor: pointer; transition: box-shadow 0.3s ease; will-change: transform; }
+.holo-card:hover { box-shadow: inset 0 0 35px rgba(255,255,255,.16), 0 0 80px var(--card-glow), 0 0 120px var(--card-glow); }
 .card-cyan { --card-glow: rgba(114,233,225,.22); }.card-gold { --card-glow: rgba(231,184,117,.22); }.card-emerald { --card-glow: rgba(120,216,172,.22); }.card-violet { --card-glow: rgba(182,152,255,.23); }.card-blue { --card-glow: rgba(115,180,255,.22); }
 .card-shine { position: absolute; inset: 0; background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,.25) 48%, transparent 54%); opacity: .25; }.card-top, .card-bottom { display: flex; justify-content: space-between; align-items: center; }.card-chip { width: 31px; height: 24px; border: 1px solid rgba(255,255,255,.65); border-radius: 5px; background: linear-gradient(135deg, #d6bd7f, #597269); box-shadow: 0 0 12px var(--card-glow); }.card-contact { color: var(--cyan); font-size: 24px; }.card-label { margin-top: 92px; color: #bcc9c8; font-size: 8px; letter-spacing: .22em; }.card-name { margin-top: 8px; font-size: 19px; }.card-number { margin-top: 34px; color: #d6dbd9; font-size: 13px; letter-spacing: .17em; }.card-bottom { position: absolute; bottom: 20px; left: 22px; right: 22px; color: var(--card-color, #d4e7e1); font-size: 15px; }.card-cyan .card-bottom { color: var(--cyan); }.card-gold .card-bottom { color: var(--gold); }.card-emerald .card-bottom { color: var(--emerald); }.card-violet .card-bottom { color: var(--violet); }.card-symbol { font-size: 11px; letter-spacing: .12em; }
-.leather-wallet { position: absolute; z-index: 8; bottom: 9%; width: 315px; height: 235px; border-radius: 13px 13px 22px 22px; background: radial-gradient(ellipse at 48% 25%, #97643c, #5c321b 60%, #32170d); border: 2px solid #8e5630; box-shadow: inset 0 0 26px rgba(0,0,0,.52), 0 23px 45px rgba(0,0,0,.7), 0 0 75px rgba(140,82,42,.18); transform-style: preserve-3d; }.wallet-stitch { position: absolute; inset: 7px; border: 1px dashed rgba(223,161,105,.5); border-radius: 9px 9px 18px 18px; }.wallet-slot { position: absolute; top: -2px; left: 20px; right: 20px; height: 55px; border-radius: 5px 5px 0 0; background: #160b07; box-shadow: inset 0 6px 13px #000; }.slot-glow { position: absolute; left: 18%; right: 18%; top: 0; height: 2px; background: var(--gold); box-shadow: 0 0 16px var(--gold); }.wallet-body { position: absolute; inset: 75px 0 0; display: flex; align-items: center; justify-content: center; gap: 9px; color: rgba(239,190,142,.63); font-size: 12px; letter-spacing: .18em; }.wallet-mark { display: grid; place-items: center; width: 29px; height: 29px; border: 1px solid currentColor; border-radius: 50%; font-size: 9px; }.stage-shadow { position: absolute; bottom: 6%; width: 430px; height: 40px; border-radius: 50%; background: rgba(91,44,20,.36); filter: blur(24px); }
+
+/* Leather wallet base styles (shared by back layer) */
+.leather-wallet { width: 315px; height: 235px; border-radius: 13px 13px 22px 22px; background: radial-gradient(ellipse at 48% 25%, #97643c, #5c321b 60%, #32170d); border: 2px solid #8e5630; box-shadow: inset 0 0 26px rgba(0,0,0,.52), 0 23px 45px rgba(0,0,0,.7), 0 0 75px rgba(140,82,42,.18); }.wallet-stitch { position: absolute; inset: 7px; border: 1px dashed rgba(223,161,105,.5); border-radius: 9px 9px 18px 18px; }.wallet-slot { position: absolute; top: -2px; left: 20px; right: 20px; height: 55px; border-radius: 5px 5px 0 0; background: #160b07; box-shadow: inset 0 6px 13px #000; }.slot-glow { position: absolute; left: 18%; right: 18%; top: 0; height: 2px; background: var(--gold); box-shadow: 0 0 16px var(--gold); }.wallet-body { position: absolute; inset: 75px 0 0; display: flex; align-items: center; justify-content: center; gap: 9px; color: rgba(239,190,142,.63); font-size: 12px; letter-spacing: .18em; }.wallet-mark { display: grid; place-items: center; width: 29px; height: 29px; border: 1px solid currentColor; border-radius: 50%; font-size: 9px; }
+.stage-shadow { position: absolute; bottom: 6%; width: 430px; height: 40px; border-radius: 50%; background: rgba(91,44,20,.36); filter: blur(24px); z-index: 1; }
+
 .orbit-label { position: absolute; z-index: 11; right: 8vw; top: 19%; display: flex; align-items: center; gap: 9px; color: var(--cyan); letter-spacing: .15em; font-size: 9px; }.orbit-label span { color: #767c7b; margin-left: 12px; }
 .stage-footer { position: absolute; z-index: 12; left: 8vw; right: 8vw; bottom: 4%; display: flex; justify-content: space-between; color: #666d6c; letter-spacing: .13em; font-size: 9px; }.stage-footer span { display: flex; align-items: center; gap: 7px; }.stage-footer svg { color: var(--cyan); }.stage-footer b { color: #c2c6c4; margin-left: 8px; }
-.after-scene { min-height: 100vh; position: relative; z-index: 2; padding: 15vh 8vw; display: flex; justify-content: space-between; gap: 10vw; background: #030505; border-top: 1px solid rgba(255,255,255,.1); }.after-scene h2 { font-size: clamp(44px, 6vw, 90px); }.after-grid { max-width: 390px; display: grid; gap: 40px; padding-top: 30px; }.after-grid div { display: grid; grid-template-columns: 26px 1fr; gap: 8px; }.after-grid svg { color: var(--cyan); }.after-grid b { font-weight: 500; }.after-grid p { grid-column: 2; color: #6d7573; font-size: 13px; line-height: 1.6; margin: 0; }
-.cards-orbit-draggable { cursor: grab; touch-action: pan-y; }.cards-orbit-draggable:active { cursor: grabbing; }.card-placeholder { pointer-events: none; }
+.card-placeholder { pointer-events: none; }
 .feature-modal-layer { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 24px; }.feature-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.8); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }.feature-modal { width: min(680px, 100%); min-height: 420px; position: relative; z-index: 1; overflow: hidden; padding: clamp(30px, 6vw, 68px); border: 1px solid rgba(114,233,225,.36); border-radius: 24px; background: linear-gradient(145deg, rgba(27,42,43,.84), rgba(3,7,8,.93)); box-shadow: 0 0 70px rgba(114,233,225,.16), inset 0 0 55px rgba(255,255,255,.06); }.feature-modal::before { content: ""; position: absolute; width: 230px; height: 230px; right: -80px; top: -90px; border-radius: 50%; background: var(--cyan); opacity: .13; filter: blur(45px); }.modal-close { position: absolute; top: 18px; right: 22px; border: 0; background: transparent; color: #bac5c4; font-size: 28px; line-height: 1; cursor: pointer; }.modal-kicker { display: flex; align-items: center; gap: 9px; color: var(--cyan); font-size: 9px; letter-spacing: .2em; }.modal-kicker span { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }.modal-index { position: absolute; right: 25px; top: 67px; color: #66716f; font-size: 10px; letter-spacing: .15em; }.feature-modal h2 { max-width: 540px; margin: 32px 0 10px; font-size: clamp(42px, 7vw, 78px); }.modal-subtitle { color: var(--gold); font-size: 15px; letter-spacing: .04em; }.modal-description { max-width: 500px; color: #adb7b5; font-size: 15px; line-height: 1.75; }.modal-proof { display: flex; align-items: center; gap: 9px; margin-top: 38px; padding-top: 17px; border-top: 1px solid rgba(255,255,255,.12); color: #7d8b88; font-size: 11px; }.modal-proof svg { color: var(--emerald); }.modal-proof b { margin-left: auto; color: var(--emerald); font-size: 9px; letter-spacing: .18em; }
-@media (max-width: 800px) { .nav-center { display: none; }.cinema-nav { padding: 0 20px; }.story-copy { left: 7vw; top: 15%; }.story-copy h1 { font-size: clamp(48px, 13vw, 76px); }.holo-card { width: 170px; height: 242px; padding: 15px; }.card-label { margin-top: 57px; font-size: 6px; }.card-name { font-size: 14px; }.card-number { margin-top: 20px; font-size: 9px; }.card-chip { width: 24px; height: 18px; }.leather-wallet { width: 245px; height: 185px; }.wallet-body { inset: 57px 0 0; font-size: 9px; }.wallet-slot { height: 42px; left: 14px; right: 14px; }.stage-footer span:nth-child(2) { display: none; }.after-scene { display: block; padding: 15vh 7vw; }.after-grid { margin-top: 80px; }.orbit-label { right: 7vw; top: 28%; }.orbit-label span { display: none; }.feature-modal { min-height: 360px; padding: 32px 24px; }.feature-modal h2 { font-size: 43px; }.modal-index { top: 62px; }.modal-description { font-size: 13px; } }
+
+@media (max-width: 800px) {
+  .nav-center { display: none; }
+  .cinema-nav { padding: 0 20px; }
+  .story-copy { left: 7vw; top: 15%; }
+  .story-copy h1 { font-size: clamp(48px, 13vw, 76px); }
+  .holo-card { width: 170px; height: 242px; padding: 15px; }
+  .card-label { margin-top: 57px; font-size: 6px; }
+  .card-name { font-size: 14px; }
+  .card-number { margin-top: 20px; font-size: 9px; }
+  .card-chip { width: 24px; height: 18px; }
+  .leather-wallet { width: 245px; height: 185px; }
+  .wallet-front-pocket { width: 245px; height: 125px; }
+  .wallet-body { inset: 57px 0 0; font-size: 9px; }
+  .wallet-slot { height: 42px; left: 14px; right: 14px; }
+  .stage-footer span:nth-child(2) { display: none; }
+  .orbit-label { right: 7vw; top: 28%; }
+  .orbit-label span { display: none; }
+  .feature-modal { min-height: 360px; padding: 32px 24px; }
+  .feature-modal h2 { font-size: 43px; }
+  .modal-index { top: 62px; }
+  .modal-description { font-size: 13px; }
+}
