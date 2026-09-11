@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PayFence | Payment reliability layer",
+  title: "PAYGENT | Payment reliability layer",
   description: "Bounded, idempotent, and verifiable payments for agentic commerce.",
 };
 

@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useMotionValue, useMotionValueEvent, useScroll, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, LockKeyhole, ShieldCheck, Sparkles } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 
 const PAYFENCE_FEATURES = [
@@ -186,7 +187,7 @@ function HoloCard({
       <div className="card-number">{card.number}</div>
       <div className="card-bottom">
         <span>{card.amount}</span>
-        <span className="card-symbol">PF</span>
+        <span className="card-symbol">PG</span>
       </div>
     </motion.article>
   );
@@ -210,7 +211,7 @@ export default function Home() {
       <div className="grainless-void" />
       <header className="cinema-nav">
         <div className="cinema-brand">
-          <span>PF</span> PAYFENCE
+          <Image className="brand-logo" src="/paygent-logo.png" alt="" width={22} height={30} priority />
         </div>
         <div className="nav-center">PAYMENT RELIABILITY LAYER</div>
         <div className="nav-right">
@@ -245,8 +246,8 @@ export default function Home() {
                 <div className="slot-glow" />
               </div>
               <div className="wallet-body">
-                <div className="wallet-mark">PF</div>
-                <span>PAYFENCE</span>
+                <Image className="wallet-mark" src="/paygent-logo.png" alt="" width={29} height={39} />
+                <span>PAYGENT</span>
               </div>
             </motion.div>
           </div>
@@ -297,7 +298,7 @@ export default function Home() {
                 ×
               </button>
               <div className="modal-kicker">
-                <span /> PAYFENCE KILLER FEATURE
+                <span /> PAYGENT KILLER FEATURE
               </div>
               <div className="modal-index">0{PAYFENCE_FEATURES.findIndex((item) => item.id === activeCard.id) + 1} / 08</div>
               <h2>{activeCard.title}</h2>
