@@ -42,12 +42,12 @@
 .pg-nav-link {
   display: flex;
   align-items: center;
-  gap: 11px;
-  padding: 10px 14px;
+  gap: 14px;
+  padding: 13px 16px;
   border-radius: 8px;
   color: #7a8280;
-  font-size: 12px;
-  letter-spacing: .06em;
+  font-size: 16px;
+  letter-spacing: .04em;
   text-decoration: none;
   transition: background .15s, color .15s;
   cursor: pointer;
@@ -55,7 +55,7 @@
 .pg-nav-link:hover { background: rgba(255,255,255,.04); color: #c8cdcb; }
 .pg-nav-link.active { background: rgba(114,233,225,.08); color: var(--cyan, #72e9e1); }
 .pg-nav-link.active svg { color: var(--cyan, #72e9e1); }
-.pg-nav-link svg { width: 18px; height: 18px; flex-shrink: 0; }
+.pg-nav-link svg { width: 22px; height: 22px; flex-shrink: 0; }
 .pg-nav-badge {
   margin-left: auto;
   background: rgba(231,184,117,.15);
