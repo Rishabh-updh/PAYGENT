@@ -61,15 +61,15 @@ const PAYFENCE_FEATURES = [
 const cardTones = ["cyan", "gold", "emerald", "violet", "blue", "cyan", "gold", "emerald"] as const;
 
 const AMBIENT_ITEMS = [
-  { label: "Jordan shoe", tone: "cyan", path: "shoe" },
-  { label: "JPG perfume bottle", tone: "gold", path: "perfume" },
-  { label: "iPhone", tone: "violet", path: "phone" },
-  { label: "Lacoste t-shirt", tone: "emerald", path: "shirt" },
-  { label: "NYC cap", tone: "blue", path: "cap" },
-  { label: "LV glasses", tone: "gold", path: "glasses" },
-  { label: "Van Cleef jewellery", tone: "cyan", path: "jewellery" },
-  { label: "Camera", tone: "violet", path: "camera" },
-  { label: "Rolex watch", tone: "emerald", path: "watch" },
+  { label: "Verified Mandate", tone: "cyan", path: "shield" },
+  { label: "Autonomous Agent", tone: "gold", path: "robot" },
+  { label: "Cryptographic Receipt", tone: "violet", path: "receipt" },
+  { label: "Digital Currency", tone: "emerald", path: "coin" },
+  { label: "Identity Hash", tone: "blue", path: "fingerprint" },
+  { label: "Ledger Log", tone: "gold", path: "audit" },
+  { label: "Expiry Window", tone: "cyan", path: "clock" },
+  { label: "Verified Mandate", tone: "violet", path: "shield" },
+  { label: "Autonomous Agent", tone: "emerald", path: "robot" },
 ] as const;
 
 const AMBIENT_POSITIONS = [
@@ -80,15 +80,14 @@ const AMBIENT_POSITIONS = [
 
 function AmbientGlyph({ path }: { path: (typeof AMBIENT_ITEMS)[number]["path"] }) {
   const common = { fill: "none", stroke: "currentColor", strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
-  if (path === "shoe") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M7 30c5 1 9-3 12-13l5 2c2 7 7 10 16 11 2 0 3 2 1 4-5 4-28 4-35 0-2-1-1-4 1-4Z"/><path {...common} strokeWidth="1.5" d="m19 20 5 5m-9-1 6 3m-9-1 5 3"/></svg>;
-  if (path === "perfume") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M19 13h10v5l3 3v15H16V21l3-3v-5Zm3-4h4v4h-4zM17 21h14m-10-8h6"/><path {...common} strokeWidth="1.5" d="M21 27h6m-6 5h6"/></svg>;
-  if (path === "phone") return <svg viewBox="0 0 48 48" aria-hidden="true"><rect {...common} strokeWidth="2" x="14" y="5" width="20" height="38" rx="4"/><path {...common} strokeWidth="1.5" d="M20 9h8M22 38h4"/><circle {...common} strokeWidth="1.5" cx="29" cy="13" r="2"/></svg>;
-  if (path === "shirt") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="m19 10 5 4 5-4 10 6-5 8-4-3v17H18V21l-4 3-5-8 10-6Z"/><path {...common} strokeWidth="1.5" d="M20 11c0 5 8 5 8 0"/></svg>;
-  if (path === "cap") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M10 27c1-9 7-14 14-14s13 5 14 14v4H10v-4Z"/><path {...common} strokeWidth="2" d="M10 30c-5 1-7 4-3 6 9 3 27 0 32-4 2-2-1-4-4-5"/><path {...common} strokeWidth="1.5" d="M19 17h10"/></svg>;
-  if (path === "glasses") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M6 21h6l2 11h8l2-11h2l2 11h8l2-11h6M24 22h-2m4 0h-2"/><path {...common} strokeWidth="1.5" d="M8 21c0-3 3-5 6-5h5c3 0 5 2 5 5m2 0c0-3 2-5 5-5h5c3 0 6 2 6 5"/></svg>;
-  if (path === "jewellery") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="m24 8 7 7-7 7-7-7 7-7Zm0 14 7 7-7 7-7-7 7-7Z"/><path {...common} strokeWidth="1.5" d="m17 15-7 7 7 7m14-14 7 7-7 7"/></svg>;
-  if (path === "camera") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M8 17h8l3-4h10l3 4h8v22H8V17Z"/><circle {...common} strokeWidth="2" cx="24" cy="28" r="7"/><circle {...common} strokeWidth="1.5" cx="35" cy="22" r="1"/></svg>;
-  return <svg viewBox="0 0 48 48" aria-hidden="true"><rect {...common} strokeWidth="2" x="13" y="15" width="22" height="20" rx="5"/><path {...common} strokeWidth="2" d="M13 20H8v8h5m22-8h5v8h-5M19 15v-4h10v4"/><circle {...common} strokeWidth="1.5" cx="24" cy="25" r="6"/><path {...common} strokeWidth="1.5" d="M24 25v-4m0 4 3 2"/></svg>;
+  if (path === "shield") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M24 44s16-8 16-20V10l-16-6-16 6v14c0 12 16 20 16 20z"/><path {...common} strokeWidth="2" d="m18 24 4 4 8-8"/></svg>;
+  if (path === "robot") return <svg viewBox="0 0 48 48" aria-hidden="true"><rect {...common} strokeWidth="2" x="8" y="20" width="32" height="20" rx="4"/><path {...common} strokeWidth="2" d="M14 20v-4c0-3.3 2.7-6 6-6h8c3.3 0 6 2.7 6 6v4M24 10V4m-4 0h8"/><circle {...common} strokeWidth="1.5" cx="18" cy="28" r="2"/><circle {...common} strokeWidth="1.5" cx="30" cy="28" r="2"/><path {...common} strokeWidth="2" d="M20 34h8"/></svg>;
+  if (path === "receipt") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M12 6v36l4-2 4 2 4-2 4 2 4-2 4 2 4-2V6H12z"/><path {...common} strokeWidth="2" d="M20 18h12M20 26h12M20 34h6"/></svg>;
+  if (path === "coin") return <svg viewBox="0 0 48 48" aria-hidden="true"><circle {...common} strokeWidth="2" cx="24" cy="24" r="16"/><path {...common} strokeWidth="2" d="M24 14v20M18 20h12M18 28h12"/></svg>;
+  if (path === "fingerprint") return <svg viewBox="0 0 48 48" aria-hidden="true"><path {...common} strokeWidth="2" d="M12 28c0-8.8 7.2-16 16-16s16 7.2 16 16M16 28c0-6.6 5.4-12 12-12s12 5.4 12 12M20 28c0-4.4 3.6-8 8-8s8 3.6 8 8M24 28v-4"/></svg>;
+  if (path === "audit") return <svg viewBox="0 0 48 48" aria-hidden="true"><rect {...common} strokeWidth="2" x="12" y="8" width="24" height="32" rx="2"/><path {...common} strokeWidth="2" d="M12 18h24M18 26h12M18 32h8"/></svg>;
+  if (path === "clock") return <svg viewBox="0 0 48 48" aria-hidden="true"><circle {...common} strokeWidth="2" cx="24" cy="24" r="16"/><polyline {...common} strokeWidth="2" points="24 14 24 24 30 28"/></svg>;
+  return <svg viewBox="0 0 48 48" aria-hidden="true"><circle {...common} strokeWidth="2" cx="24" cy="24" r="10"/></svg>;
 }
 
 function AmbientIcon({ item, index }: { item: (typeof AMBIENT_ITEMS)[number]; index: number }) {
@@ -363,9 +362,9 @@ export default function Home() {
           </motion.div>
 
           <motion.div className="telemetry-block top-right" style={{ opacity: titleOpacity }}>
-            <div className="tel-label">NETWORK THROUGHPUT</div>
-            <div className="tel-value">12.4<span className="tel-unit">k/s</span></div>
-            <div className="tel-bars">
+            <div className="tel-label">TRANSACTIONS / MIN</div>
+            <div className="tel-value">1,482</div>
+            <div className="tel-bars spark-pulse">
               <div className="tel-bar" style={{ height: '40%' }}></div>
               <div className="tel-bar" style={{ height: '70%' }}></div>
               <div className="tel-bar" style={{ height: '50%' }}></div>
@@ -377,10 +376,13 @@ export default function Home() {
           </motion.div>
           
           <motion.div className="telemetry-block bottom-left" style={{ opacity: titleOpacity }}>
-            <div className="tel-label">CRYPTOGRAPHIC PROOF</div>
-            <div className="tel-value">SECURE ENCLAVE</div>
-            <div className="tel-crypto">SHA-256: 3a9b8f...21c9a</div>
-            <div className="tel-crypto">IDEMPOTENCY: ACTIVE</div>
+            <div className="tel-label">ACTIVE MANDATES</div>
+            <div className="tel-value">3,492</div>
+          </motion.div>
+
+          <motion.div className="telemetry-block bottom-right" style={{ opacity: titleOpacity }}>
+            <div className="tel-label">AGENT TRUST AVG</div>
+            <div className="tel-value">94.2% <span className="tel-unit">↑</span></div>
           </motion.div>
           <motion.div className="wallet-stage" style={{ scale: stageScale }}>
             <div className="wallet-back">
@@ -419,6 +421,12 @@ export default function Home() {
             <motion.div className="wallet-front-pocket" style={{ scale: walletScale }} />
             <Image className="wallet-center-logo" src="/paygent-logo.png" alt="PAYGENT" width={72} height={98} />
             <div className="stage-shadow" />
+          </motion.div>
+
+          <motion.div className="hero-ticker-wrap" style={{ opacity: titleOpacity }}>
+            <div className="hero-ticker">
+              AGENT_047 → verified → ₹840 → blinkit.com &nbsp;&nbsp;&nbsp;&nbsp; AGENT_012 → escalated → ₹4,200 → zeptonow.com &nbsp;&nbsp;&nbsp;&nbsp; AGENT_092 → approved → ₹150 → amazon.in &nbsp;&nbsp;&nbsp;&nbsp; AGENT_047 → verified → ₹840 → blinkit.com &nbsp;&nbsp;&nbsp;&nbsp; AGENT_012 → escalated → ₹4,200 → zeptonow.com
+            </div>
           </motion.div>
         </section>
       </div>

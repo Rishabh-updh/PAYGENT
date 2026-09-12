@@ -34,6 +34,70 @@ const DASHBOARD_MODULES = [
   { href: "/dashboard/disputes", label: "Disputes", eyebrow: "07 / RECONCILE", description: "Investigate exceptions and keep the trust layer honest.", icon: IconDispute, tone: "emerald" },
 ] as const;
 
+function renderVisualElement(href: string) {
+  switch (href) {
+    case "/dashboard":
+    case "/dashboard/overview":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="tel-bars spark-pulse" style={{ height: 38, marginTop: 0 }}>
+            <div className="tel-bar" style={{ height: '40%' }}></div>
+            <div className="tel-bar" style={{ height: '70%' }}></div>
+            <div className="tel-bar" style={{ height: '50%' }}></div>
+            <div className="tel-bar active" style={{ height: '90%' }}></div>
+            <div className="tel-bar" style={{ height: '60%' }}></div>
+            <div className="tel-bar" style={{ height: '80%' }}></div>
+          </div>
+        </div>
+      );
+    case "/dashboard/mandates":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="pg-visual-mandates">14 <span>ACTIVE</span></div>
+        </div>
+      );
+    case "/dashboard/agents":
+      return (
+        <div className="pg-visual-wrap">
+          <svg width="68" height="68" viewBox="0 0 36 36">
+            <path stroke="rgba(255,255,255,0.06)" strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <path stroke="var(--emerald)" strokeWidth="3" strokeDasharray="78, 100" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+            <text x="18" y="21.5" fill="#c3d5d2" fontSize="9" fontFamily="var(--font-geist-mono, monospace)" textAnchor="middle">78%</text>
+          </svg>
+        </div>
+      );
+    case "/dashboard/approvals":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="pg-visual-approvals">3 <span>PENDING</span></div>
+        </div>
+      );
+    case "/dashboard/console":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="pg-visual-console">
+            <div className="pg-live-dot"></div>
+            <div className="pg-waveform"><span></span><span></span><span></span><span></span></div>
+          </div>
+        </div>
+      );
+    case "/dashboard/ledger":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="pg-visual-ledger">...3a9b8f→21c9a</div>
+        </div>
+      );
+    case "/dashboard/disputes":
+      return (
+        <div className="pg-visual-wrap">
+          <div className="pg-visual-disputes">1 <span>OPEN</span></div>
+        </div>
+      );
+    default:
+      return null;
+  }
+}
+
 export default function OverviewPage() {
   const { data, loading, error } = useFetch<DashboardData>("/api/dashboard");
   const [activeModule, setActiveModule] = useState<(typeof DASHBOARD_MODULES)[number] | null>(null);
@@ -74,6 +138,7 @@ export default function OverviewPage() {
                 <span className="pg-module-eyebrow">{module.eyebrow}</span>
                 <span className="pg-module-label">{module.label}</span>
                 <span className="pg-module-description">{module.description}</span>
+                {renderVisualElement(module.href)}
                 <span className="pg-module-open">OPEN LAYER <b>↗</b></span>
               </motion.button>
             );
